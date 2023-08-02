@@ -1,5 +1,5 @@
 import sympy
-from tensorconvertor import FourthOrderTensor
+from tensorconvert import FourthOrderTensor
 
 
 def test_array():

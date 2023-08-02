@@ -1,4 +1,4 @@
-# `tensorconvertor`: Convertor between tensor representations
+# Representation of second and fourth-order tensors
 
 ```{toctree}
 :hidden: true

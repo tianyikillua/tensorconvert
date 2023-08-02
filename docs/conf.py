@@ -6,14 +6,14 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = "tensorconvertor"
+project = "tensorconvert"
 copyright = "2023, Tianyi Li"
 author = "Tianyi Li"
 
 html_context = {
     "display_github": True,  # Integrate GitHub
     "github_user": "tianyikillua",  # Username
-    "github_repo": "tensorconvertor",  # Repo name
+    "github_repo": "tensorconvert",  # Repo name
     "github_version": "main",  # Version
     "conf_py_path": "/docs/",  # Path in the checkout to the docs root
 }

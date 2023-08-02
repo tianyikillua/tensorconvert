@@ -1,5 +1,5 @@
 import sympy
-from tensorconvertor import SecondOrderTensor
+from tensorconvert import SecondOrderTensor
 
 
 def test_array():

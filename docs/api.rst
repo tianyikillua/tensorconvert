@@ -4,11 +4,11 @@ API
 Second-order tensors
 --------------------
 
-.. autoclass:: tensorconvertor.SecondOrderTensor
+.. autoclass:: tensorconvert.SecondOrderTensor
    :members:
 
 Fourth-order tensors
 --------------------
 
-.. autoclass:: tensorconvertor.FourthOrderTensor
+.. autoclass:: tensorconvert.FourthOrderTensor
    :members:
