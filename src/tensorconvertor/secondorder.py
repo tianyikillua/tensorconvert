@@ -2,10 +2,10 @@ import sympy
 
 
 class SecondOrderTensor:
-    """
-    Representations of second-order tensors
+    """Representations of second-order tensors.
 
-    :param int dim: Spatial dimension [2, 3]
+    Args:
+        dim (int): Spatial dimension {2, 3}
     """
 
     def __init__(self, dim: int = 3):
@@ -16,9 +16,7 @@ class SecondOrderTensor:
         self.a = sympy.Matrix(sympy.MatrixSymbol("a", self.dim, self.dim))
 
     def ordering(self, symmetry: bool = True):
-        """
-        Ordering of second-order tensor components
-        """
+        """Ordering of second-order tensor components"""
         if symmetry:
             if self.dim == 3:
                 ordering = ((0, 0), (1, 1), (2, 2), (0, 1), (0, 2), (1, 2))
@@ -42,15 +40,11 @@ class SecondOrderTensor:
         return ordering
 
     def as_array(self):
-        """
-        Represent as array
-        """
+        """Represent as array"""
         return self.a
 
     def as_voigt_stress(self):
-        """
-        Represent using Voigt notation for stress
-        """
+        """Represent using Voigt notation for stress"""
         ordering = self.ordering()
         stress = sympy.zeros(len(ordering), 1)
         for o in range(len(ordering)):
@@ -59,9 +53,7 @@ class SecondOrderTensor:
         return stress
 
     def as_voigt_strain(self):
-        """
-        Represent using Voigt notation for strain
-        """
+        """Represent using Voigt notation for strain"""
         strain = self.as_voigt_stress()
         if self.dim == 3:
             strain[3:, :] *= 2
@@ -70,9 +62,7 @@ class SecondOrderTensor:
         return strain
 
     def as_mandel(self):
-        """
-        Represent using Mandel notation
-        """
+        """Represent using Mandel notation"""
         strain = self.as_voigt_stress()
         if self.dim == 3:
             strain[3:, :] *= sympy.sqrt(2)
@@ -81,9 +71,7 @@ class SecondOrderTensor:
         return strain
 
     def as_unsym(self):
-        """
-        Represent the unsymmetric notation
-        """
+        """Represent the unsymmetric notation"""
         ordering = self.ordering(symmetry=False)
         a = sympy.zeros(len(ordering), 1)
         for o in range(len(ordering)):
@@ -101,9 +89,7 @@ class SecondOrderTensor:
         return self
 
     def from_voigt_stress(self, a):
-        """
-        Initialize from Voigt notation for stress
-        """
+        """Initialize from Voigt notation for stress"""
         ordering = self.ordering()
         assert a.shape == (len(ordering), 1)
 
@@ -116,9 +102,7 @@ class SecondOrderTensor:
         return self
 
     def from_voigt_strain(self, a):
-        """
-        Initialize from Voigt notation for strain
-        """
+        """Initialize from Voigt notation for strain"""
         a_copy = a.copy()
         if self.dim == 3:
             a_copy[3:, :] /= 2
@@ -127,9 +111,7 @@ class SecondOrderTensor:
         return self.from_voigt_stress(a_copy)
 
     def from_mandel(self, a):
-        """
-        Initialize from Mandel notation
-        """
+        """Initialize from Mandel notation"""
         a_copy = a.copy()
         if self.dim == 3:
             a_copy[3:, :] /= sympy.sqrt(2)
@@ -138,9 +120,7 @@ class SecondOrderTensor:
         return self.from_voigt_stress(a_copy)
 
     def from_unsym(self, a):
-        """
-        Initialize from the unsymmetric notation
-        """
+        """Initialize from the unsymmetric notation."""
         ordering = self.ordering(symmetry=False)
         assert a.shape == (len(ordering), 1)
 
@@ -157,25 +137,17 @@ class SecondOrderTensor:
         return basis
 
     def basis_voigt_stress(self):
-        """
-        Basis vectors of Voigt notation for stress
-        """
+        """Basis vectors of Voigt notation for stress"""
         return self._basis(self.from_voigt_stress, symmetry=True)
 
     def basis_voigt_strain(self):
-        """
-        Basis vectors of Voigt notation for strain
-        """
+        """Basis vectors of Voigt notation for strain"""
         return self._basis(self.from_voigt_strain, symmetry=True)
 
     def basis_mandel(self):
-        """
-        Basis vectors of Mandel notation
-        """
+        """Basis vectors of Mandel notation"""
         return self._basis(self.from_mandel, symmetry=True)
 
     def basis_unsym(self):
-        """
-        Basis vectors of the unsymmetric notation
-        """
+        """Basis vectors of the unsymmetric notation"""
         return self._basis(self.from_unsym, symmetry=False)

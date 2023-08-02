@@ -1,8 +1,10 @@
 # `tensorconvertor`: Convertor between tensor representations
 
 ```{toctree}
+:hidden: true
 :maxdepth: 1
-:caption: Contents
 
-apidocs/index
+api
+notebooks/second-order
+notebooks/fourth-order
 ```

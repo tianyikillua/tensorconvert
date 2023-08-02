@@ -4,11 +4,11 @@ from .secondorder import SecondOrderTensor
 
 
 class FourthOrderTensor:
-    """
-    Representations of fourth-order tensors
+    """Representations of fourth-order tensors
 
-    :param int dim: Spatial dimension [2, 3]
-    :param str symmetry: Enforce symmetry for array
+    Args:
+        dim (int): Spatial dimension {2, 3}
+        symmetry (str): Enforce symmetry for array {"major", "minor", None}
     """
 
     def __init__(self, dim: int = 3, symmetry="major"):
@@ -66,9 +66,7 @@ class FourthOrderTensor:
         return y
 
     def as_array(self):
-        """
-        Represent as array
-        """
+        """Represent as array"""
         if self.a is None:
             assert self.operator is not None
             mandel = self.as_mandel()
@@ -77,9 +75,7 @@ class FourthOrderTensor:
         return self.a
 
     def as_voigt(self):
-        """
-        Represent as Voigt notation
-        """
+        """Represent as Voigt notation"""
         basis = self.second_order.basis_voigt_strain()
         out = sympy.zeros(len(basis), len(basis))
         for i in range(len(basis)):
@@ -89,9 +85,7 @@ class FourthOrderTensor:
         return out
 
     def as_mandel(self):
-        """
-        Represent as Mandel notation
-        """
+        """Represent as Mandel notation"""
         basis = self.second_order.basis_mandel()
         out = sympy.zeros(len(basis), len(basis))
         for i in range(len(basis)):
@@ -101,9 +95,7 @@ class FourthOrderTensor:
         return out
 
     def as_unsym(self):
-        """
-        Represent as the unsymmetric notation
-        """
+        """Represent as the unsymmetric notation"""
         basis = self.second_order.basis_unsym()
         out = sympy.zeros(len(basis), len(basis))
         for i in range(len(basis)):
@@ -113,17 +105,13 @@ class FourthOrderTensor:
         return out
 
     def from_operator(self, operator):
-        """
-        Initialize from linear operator on the second-order tensors
-        """
+        """Initialize from linear operator on the second-order tensors"""
         self.a = None
         self.operator = operator
         return self
 
     def from_array(self, a):
-        """
-        Initialize from array
-        """
+        """Initialize from array"""
         assert a.shape == (self.dim,) * 4
 
         self.a = a
@@ -144,24 +132,18 @@ class FourthOrderTensor:
         return self
 
     def from_voigt(self, a):
-        """
-        Initialize from Voigt notation
-        """
+        """Initialize from Voigt notation"""
         a_copy = sympy.Matrix(a)
         a_copy[:, 3:] *= sympy.sqrt(2)
         a_copy[3:, :] *= sympy.sqrt(2)
         return self.from_mandel(a_copy)
 
     def from_mandel(self, a):
-        """
-        Initialize from Mandel notation
-        """
+        """Initialize from Mandel notation"""
         return self._from_basis(a, self.basis_mandel())
 
     def from_unsym(self, a):
-        """
-        Initialize from the unsymmetric notation
-        """
+        """Initialize from the unsymmetric notation"""
         ordering = self.ordering(symmetry=False)
         assert a.shape == (len(ordering),) * 2
 
@@ -181,13 +163,9 @@ class FourthOrderTensor:
         return basis
 
     def basis_mandel(self):
-        """
-        Basis vectors of Mandel notation
-        """
+        """Basis vectors of Mandel notation"""
         return self._basis(self.second_order.basis_mandel())
 
     def basis_unsym(self):
-        """
-        Basis vectors of the unsymmetric notation
-        """
+        """Basis vectors of the unsymmetric notation"""
         return self._basis(self.second_order.basis_unsym())
