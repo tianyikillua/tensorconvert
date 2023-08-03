@@ -7,4 +7,4 @@
 
 ## Documentation
 
-Refer to the [documentation]([https://orix.readthedocs.io>](https://tensorconvert.readthedocs.io/en/latest/)) regarding the use cases of `tensorconvert`.
+Refer to the [documentation](https://tensorconvert.readthedocs.io/en/latest/) regarding the use cases of `tensorconvert`.

@@ -3,20 +3,18 @@
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+# -- Path setup --------------------------------------------------------------
+import os
+import sys
+
+sys.path.insert(0, os.path.abspath("../src"))
+
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "tensorconvert"
 copyright = "2023, Tianyi Li"
 author = "Tianyi Li"
-
-html_context = {
-    "display_github": True,  # Integrate GitHub
-    "github_user": "tianyikillua",  # Username
-    "github_repo": "tensorconvert",  # Repo name
-    "github_version": "main",  # Version
-    "conf_py_path": "/docs/",  # Path in the checkout to the docs root
-}
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -49,3 +47,7 @@ nb_execution_mode = "off"
 
 html_theme = "sphinx_book_theme"
 html_static_path = ["_static"]
+html_theme_options = {
+    "repository_url": "https://github.com/tianyikillua/tensorconvert",
+    "use_repository_button": True,
+}
