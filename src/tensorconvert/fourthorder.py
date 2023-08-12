@@ -134,8 +134,8 @@ class FourthOrderTensor:
     def from_voigt(self, a):
         """Initialize from Voigt notation"""
         a_copy = sympy.Matrix(a)
-        a_copy[:, 3:] *= sympy.sqrt(2)
-        a_copy[3:, :] *= sympy.sqrt(2)
+        a_copy[:, self.dim :] *= sympy.sqrt(2)
+        a_copy[self.dim :, :] *= sympy.sqrt(2)
         return self.from_mandel(a_copy)
 
     def from_mandel(self, a):

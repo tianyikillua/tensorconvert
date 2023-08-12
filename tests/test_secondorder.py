@@ -1,12 +1,15 @@
+import pytest
 import sympy
+
 from tensorconvert import SecondOrderTensor
 
 
-def test_array():
-    a_voigt = sympy.randMatrix(6, 1)
-    a = SecondOrderTensor().from_voigt_strain(a_voigt).as_array()
-    assert SecondOrderTensor().from_array(a).as_voigt_strain() == a_voigt
-
-    a_mandel = sympy.randMatrix(6, 1)
-    a = SecondOrderTensor().from_mandel(a_mandel).as_array()
-    assert SecondOrderTensor().from_array(a).as_mandel() == a_mandel
+@pytest.mark.parametrize("dim", [2, 3])
+def test_conversion(dim):
+    array = sympy.randMatrix(dim, dim)
+    array += array.T
+    a = SecondOrderTensor(dim).from_array(array)
+    for basis in ["mandel", "voigt_strain", "voigt_stress", "unsym"]:
+        assert (
+            getattr(a, "from_" + basis)(getattr(a, "as_" + basis)()).as_array() == array
+        )

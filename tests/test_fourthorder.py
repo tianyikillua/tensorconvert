@@ -1,43 +1,44 @@
+import pytest
 import sympy
+
 from tensorconvert import FourthOrderTensor
 
 
-def test_array():
-    a_voigt = sympy.randMatrix(6)
+@pytest.mark.parametrize("dim", [2, 3])
+def test_conversion(dim):
+    n = 6 if dim == 3 else 3
+
+    a_voigt = sympy.randMatrix(n, n)
     a_voigt = a_voigt + a_voigt.T
-    a = FourthOrderTensor().from_voigt(a_voigt).as_array()
-    assert FourthOrderTensor().from_array(a).as_voigt() == a_voigt
+    a = FourthOrderTensor(dim).from_voigt(a_voigt).as_array()
+    assert FourthOrderTensor(dim).from_array(a).as_voigt() == a_voigt
 
-    a_mandel = sympy.randMatrix(6)
+    a_mandel = sympy.randMatrix(n, n)
     a_mandel = a_mandel + a_mandel.T
-    a = FourthOrderTensor().from_mandel(a_mandel).as_array()
-    assert FourthOrderTensor().from_array(a).as_mandel() == a_mandel
+    a = FourthOrderTensor(dim).from_mandel(a_mandel).as_array()
+    assert FourthOrderTensor(dim).from_array(a).as_mandel() == a_mandel
 
-    a_unsym = sympy.randMatrix(9)
-    a = FourthOrderTensor(symmetry=None).from_unsym(a_unsym).as_array()
-    FourthOrderTensor(symmetry=None).from_array(a).as_unsym() == a_unsym
+    n = 9 if dim == 3 else 4
+    a_unsym = sympy.randMatrix(n, n)
+    a = FourthOrderTensor(dim, symmetry=None).from_unsym(a_unsym).as_array()
+    assert FourthOrderTensor(dim, symmetry=None).from_array(a).as_unsym() == a_unsym
 
 
-def test_identity():
+@pytest.mark.parametrize("dim", [2, 3])
+def test_operators(dim):
     def identity(x):
         return x
 
-    assert FourthOrderTensor().from_operator(identity).as_mandel() == sympy.eye(6)
-    assert FourthOrderTensor(dim=2).from_operator(identity).as_mandel() == sympy.eye(3)
+    a = FourthOrderTensor(dim).from_operator(identity)
 
-    def linear_elastic(eps, dim=3):
+    n = 6 if dim == 3 else 3
+    assert FourthOrderTensor(dim).from_operator(identity).as_mandel() == sympy.eye(n)
+
+    def linear_elastic(eps):
         lmbda, mu = sympy.symbols("lambda, mu", positive=True)
         return lmbda * sympy.trace(eps) * sympy.eye(dim) + 2 * mu * eps
 
-    assert (
-        FourthOrderTensor()
-        .from_mandel(FourthOrderTensor().from_operator(linear_elastic).as_mandel())
-        .as_voigt()
-        == FourthOrderTensor().from_operator(linear_elastic).as_voigt()
-    )
-    assert (
-        FourthOrderTensor()
-        .from_voigt(FourthOrderTensor().from_operator(linear_elastic).as_voigt())
-        .as_mandel()
-        == FourthOrderTensor().from_operator(linear_elastic).as_mandel()
-    )
+    a = FourthOrderTensor(dim).from_operator(linear_elastic)
+
+    assert FourthOrderTensor(dim).from_mandel(a.as_mandel()).as_voigt() == a.as_voigt()
+    assert FourthOrderTensor(dim).from_voigt(a.as_voigt()).as_mandel() == a.as_mandel()
