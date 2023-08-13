@@ -9,12 +9,14 @@ class FourthOrderTensor:
     Args:
         dim (int): Spatial dimension {2, 3}
         symmetry (str): Enforce symmetry for array {"major", "minor", None}
+        ordering (str): Ordering of the off-diagonal components for 3-d tensors
+            {"121323", "122313", "231312"}
     """
 
-    def __init__(self, dim: int = 3, symmetry="major"):
-        self.second_order = SecondOrderTensor(dim)
+    def __init__(self, dim: int = 3, symmetry="major", ordering="121323"):
+        self.second_order = SecondOrderTensor(dim, ordering)
         self.dim = dim
-        self.ordering = self.second_order.ordering
+        self._ordering = self.second_order._ordering
 
         # Symmetry
         assert symmetry in ["major", "minor", None]
@@ -56,7 +58,7 @@ class FourthOrderTensor:
                             y = y.subs(self.a[j, i, k, l], self.a[i, j, k, l])
 
         if self.symmetry == "major":
-            ordering = self.ordering()
+            ordering = self._ordering()
             for i in range(self.dim):
                 for j in range(i, self.dim):
                     for k in range(self.dim):
@@ -119,7 +121,7 @@ class FourthOrderTensor:
         return self
 
     def _from_basis(self, a, basis, symmetry=True):
-        ordering = self.ordering(symmetry)
+        ordering = self._ordering(symmetry)
         assert a.shape == (len(ordering),) * 2
 
         self.a = None
@@ -144,7 +146,7 @@ class FourthOrderTensor:
 
     def from_unsym(self, a):
         """Initialize from the unsymmetric notation"""
-        ordering = self.ordering(symmetry=False)
+        ordering = self._ordering(symmetry=False)
         assert a.shape == (len(ordering),) * 2
 
         self.a = sympy.Array.zeros(self.dim, self.dim, self.dim, self.dim).as_mutable()

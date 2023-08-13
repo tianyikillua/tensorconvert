@@ -6,38 +6,20 @@ class SecondOrderTensor:
 
     Args:
         dim (int): Spatial dimension {2, 3}
+        ordering (str): Ordering of the off-diagonal components for 3-d tensors
+            {"121323", "122313", "231312"}
     """
 
-    def __init__(self, dim: int = 3):
+    def __init__(self, dim: int = 3, ordering="121323"):
         assert dim in [2, 3]
         self.dim = dim
 
+        # Ordering
+        assert ordering in ["121323", "122313", "231312"]
+        self.ordering = ordering
+
         # Default tensor
         self.a = sympy.Matrix(sympy.MatrixSymbol("a", self.dim, self.dim))
-
-    def ordering(self, symmetry: bool = True):
-        """Ordering of second-order tensor components"""
-        if symmetry:
-            if self.dim == 3:
-                ordering = ((0, 0), (1, 1), (2, 2), (0, 1), (0, 2), (1, 2))
-            else:
-                ordering = ((0, 0), (1, 1), (0, 1))
-        else:
-            if self.dim == 3:
-                ordering = (
-                    (0, 0),
-                    (1, 1),
-                    (2, 2),
-                    (0, 1),
-                    (1, 0),
-                    (0, 2),
-                    (2, 0),
-                    (1, 2),
-                    (2, 1),
-                )
-            else:
-                ordering = ((0, 0), (1, 1), (0, 1), (1, 0))
-        return ordering
 
     def as_array(self):
         """Represent as array"""
@@ -45,7 +27,7 @@ class SecondOrderTensor:
 
     def as_voigt_stress(self):
         """Represent using Voigt notation for stress"""
-        ordering = self.ordering()
+        ordering = self._ordering()
         stress = sympy.zeros(len(ordering), 1)
         for o in range(len(ordering)):
             i, j = ordering[o]
@@ -55,24 +37,18 @@ class SecondOrderTensor:
     def as_voigt_strain(self):
         """Represent using Voigt notation for strain"""
         strain = self.as_voigt_stress()
-        if self.dim == 3:
-            strain[3:, :] *= 2
-        else:
-            strain[2:, :] *= 2
+        strain[self.dim :, :] *= 2
         return strain
 
     def as_mandel(self):
         """Represent using Mandel notation"""
         strain = self.as_voigt_stress()
-        if self.dim == 3:
-            strain[3:, :] *= sympy.sqrt(2)
-        else:
-            strain[2:, :] *= sympy.sqrt(2)
+        strain[self.dim :, :] *= sympy.sqrt(2)
         return strain
 
     def as_unsym(self):
         """Represent the unsymmetric notation"""
-        ordering = self.ordering(symmetry=False)
+        ordering = self._ordering(symmetry=False)
         a = sympy.zeros(len(ordering), 1)
         for o in range(len(ordering)):
             i, j = ordering[o]
@@ -90,7 +66,7 @@ class SecondOrderTensor:
 
     def from_voigt_stress(self, a):
         """Initialize from Voigt notation for stress"""
-        ordering = self.ordering()
+        ordering = self._ordering()
         assert a.shape == (len(ordering), 1)
 
         self.a = sympy.zeros(self.dim, self.dim)
@@ -104,24 +80,18 @@ class SecondOrderTensor:
     def from_voigt_strain(self, a):
         """Initialize from Voigt notation for strain"""
         a_copy = a.copy()
-        if self.dim == 3:
-            a_copy[3:, :] /= 2
-        else:
-            a_copy[2:, :] /= 2
+        a_copy[self.dim :, :] /= 2
         return self.from_voigt_stress(a_copy)
 
     def from_mandel(self, a):
         """Initialize from Mandel notation"""
         a_copy = a.copy()
-        if self.dim == 3:
-            a_copy[3:, :] /= sympy.sqrt(2)
-        else:
-            a_copy[2:, :] /= sympy.sqrt(2)
+        a_copy[self.dim :, :] /= sympy.sqrt(2)
         return self.from_voigt_stress(a_copy)
 
     def from_unsym(self, a):
         """Initialize from the unsymmetric notation."""
-        ordering = self.ordering(symmetry=False)
+        ordering = self._ordering(symmetry=False)
         assert a.shape == (len(ordering), 1)
 
         self.a = sympy.zeros(self.dim, self.dim)
@@ -130,8 +100,8 @@ class SecondOrderTensor:
             self.a[i, j] = a[o]
         return self
 
-    def _basis(self, from_basis, symmetry=True):
-        ordering = self.ordering(symmetry)
+    def _basis(self, from_basis, symmetry):
+        ordering = self._ordering(symmetry)
         eye = sympy.eye(len(ordering))
         basis = [from_basis(eye[:, i]).as_array() for i in range(len(ordering))]
         return basis
@@ -151,3 +121,35 @@ class SecondOrderTensor:
     def basis_unsym(self):
         """Basis vectors of the unsymmetric notation"""
         return self._basis(self.from_unsym, symmetry=False)
+
+    def _ordering(self, symmetry: bool = True):
+        """Ordering of second-order tensor components"""
+        if symmetry:
+            if self.dim == 3:
+                ordering = [(0, 0), (1, 1), (2, 2), (0, 1), (0, 2), (1, 2)]
+                if self.ordering == "122313":
+                    ordering = [ordering[i] for i in [0, 1, 2, 3, 5, 4]]
+                elif self.ordering == "231312":
+                    ordering = [ordering[i] for i in [0, 1, 2, 5, 4, 3]]
+            else:
+                ordering = [(0, 0), (1, 1), (0, 1)]
+        else:
+            if self.dim == 3:
+                ordering = [
+                    (0, 0),
+                    (1, 1),
+                    (2, 2),
+                    (0, 1),
+                    (1, 0),
+                    (0, 2),
+                    (2, 0),
+                    (1, 2),
+                    (2, 1),
+                ]
+                if self.ordering == "122313":
+                    ordering = [ordering[i] for i in [0, 1, 2, 3, 4, 7, 8, 5, 6]]
+                elif self.ordering == "231312":
+                    ordering = [ordering[i] for i in [0, 1, 2, 7, 8, 5, 6, 3, 4]]
+            else:
+                ordering = [(0, 0), (1, 1), (0, 1), (1, 0)]
+        return tuple(ordering)
