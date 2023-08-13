@@ -1,7 +1,7 @@
 import pytest
 import sympy
 
-from tensorconvert import FourthOrderTensor
+from tensorconvert import FourthOrderTensor, SecondOrderTensor
 
 
 @pytest.mark.parametrize("dim", [2, 3])
@@ -9,12 +9,12 @@ def test_conversion(dim):
     n = 6 if dim == 3 else 3
 
     a_voigt = sympy.randMatrix(n, n)
-    a_voigt = a_voigt + a_voigt.T
+    a_voigt += a_voigt.T
     a = FourthOrderTensor(dim).from_voigt(a_voigt).as_array()
     assert FourthOrderTensor(dim).from_array(a).as_voigt() == a_voigt
 
     a_mandel = sympy.randMatrix(n, n)
-    a_mandel = a_mandel + a_mandel.T
+    a_mandel += a_mandel.T
     a = FourthOrderTensor(dim).from_mandel(a_mandel).as_array()
     assert FourthOrderTensor(dim).from_array(a).as_mandel() == a_mandel
 
@@ -42,3 +42,14 @@ def test_operators(dim):
 
     assert FourthOrderTensor(dim).from_mandel(a.as_mandel()).as_voigt() == a.as_voigt()
     assert FourthOrderTensor(dim).from_voigt(a.as_voigt()).as_mandel() == a.as_mandel()
+
+    eps = sympy.randMatrix(dim, dim)
+    eps += eps.T
+    SecondOrderTensor(dim).from_array(
+        linear_elastic(eps)
+    ).as_mandel() == a.as_mandel() * SecondOrderTensor(dim).from_array(eps).as_mandel()
+    SecondOrderTensor(dim).from_array(
+        linear_elastic(eps)
+    ).as_voigt_stress() == a.as_voigt() * SecondOrderTensor(dim).from_array(
+        eps
+    ).as_voigt_strain()
