@@ -67,6 +67,10 @@ class FourthOrderTensor:
                                 y = y.subs(self.a[k, l, i, j], self.a[i, j, k, l])
         return y
 
+    def as_operator(self):
+        """Represent as linear operator on the second-order tensors"""
+        return self._compute
+
     def as_array(self):
         """Represent as array"""
         if self.a is None:
