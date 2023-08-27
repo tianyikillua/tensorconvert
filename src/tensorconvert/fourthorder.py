@@ -75,7 +75,7 @@ class FourthOrderTensor:
         ).from_unsym(sympy.simplify(self.as_unsym().inv()))
 
     def __eq__(self, other: FourthOrderTensor) -> bool:
-        """Checks equality with other tensor.
+        """Checks equality with the other tensor.
 
         Args:
             other (FourthOrderTensor): Another fourth-order tensor to be compared.

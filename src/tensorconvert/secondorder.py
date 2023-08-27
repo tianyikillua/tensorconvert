@@ -24,7 +24,7 @@ class SecondOrderTensor:
         self.a = sympy.Matrix(sympy.MatrixSymbol("a", self.dim, self.dim))
 
     def __eq__(self, other: SecondOrderTensor) -> bool:
-        """Checks equality with other tensor.
+        """Checks equality with the other tensor.
 
         Args:
             other (SecondOrderTensor): Another second-order tensor to be compared.
