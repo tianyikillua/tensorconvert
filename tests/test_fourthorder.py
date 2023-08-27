@@ -53,3 +53,5 @@ def test_operators(dim):
     ).as_voigt_stress() == a.as_voigt() * SecondOrderTensor(dim).from_array(
         eps
     ).as_voigt_strain()
+
+    assert (a.inv() * a).as_mandel() == sympy.eye(n)
