@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import sympy
 
 
@@ -20,6 +22,14 @@ class SecondOrderTensor:
 
         # Default tensor
         self.a = sympy.Matrix(sympy.MatrixSymbol("a", self.dim, self.dim))
+
+    def __eq__(self, other: SecondOrderTensor) -> bool:
+        """Checks equality with other tensor.
+
+        Args:
+            other (SecondOrderTensor): Another second-order tensor to be compared.
+        """
+        return self.as_unsym() == other.as_unsym()
 
     def as_array(self):
         """Represent as array"""

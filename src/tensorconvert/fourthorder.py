@@ -74,6 +74,14 @@ class FourthOrderTensor:
             self.dim, symmetry=None, ordering=self.ordering
         ).from_unsym(sympy.simplify(self.as_unsym().inv()))
 
+    def __eq__(self, other: FourthOrderTensor) -> bool:
+        """Checks equality with other tensor.
+
+        Args:
+            other (FourthOrderTensor): Another fourth-order tensor to be compared.
+        """
+        return self.as_unsym() == other.as_unsym()
+
     def _prescribe_symmetry(self, y):
         # Minor symmetry
         if self.symmetry in ["minor", "major"]:
