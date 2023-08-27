@@ -67,9 +67,8 @@ class FourthOrderTensor:
         """Invert this tensor.
 
         The inversion is understood in the sense of linear operators
-        in the space of second-order tensors.
-
-        Composition of a tensor with its inverse gives an identity operator.
+        in the space of second-order tensors. Composition of a tensor with its inverse
+        gives an identity operator.
         """
         return FourthOrderTensor(
             self.dim, symmetry=None, ordering=self.ordering
