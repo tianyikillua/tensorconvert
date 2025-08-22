@@ -1,5 +1,5 @@
 from .__about__ import __version__
-from .secondorder import SecondOrderTensor
 from .fourthorder import FourthOrderTensor
+from .secondorder import SecondOrderTensor
 
-__all__ = ["SecondOrderTensor", "FourthOrderTensor"]
+__all__ = ["__version__", "SecondOrderTensor", "FourthOrderTensor"]

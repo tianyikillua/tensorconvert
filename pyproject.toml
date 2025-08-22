@@ -19,3 +19,6 @@ dependencies = ["sympy"]
 
 [project.urls]
 "Homepage" = "https://github.com/tianyikillua/tensorconvert"
+
+[tool.ruff.lint]
+ignore = ["E741"]
