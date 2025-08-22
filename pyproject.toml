@@ -2,5 +2,20 @@
 requires = ["setuptools>=42", "wheel"]
 build-backend = "setuptools.build_meta"
 
-[tool.isort]
-profile = "black"
+[project]
+name = "tensorconvert"
+version = "0.1.0"
+authors = [{ name = "Tianyi Li", email = "tianyikillua@gmail.com" }]
+description = "Conversion between tensor representations"
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Science/Research",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+]
+dependencies = ["sympy"]
+
+[project.urls]
+"Homepage" = "https://github.com/tianyikillua/tensorconvert"
